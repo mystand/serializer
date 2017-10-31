@@ -8,7 +8,8 @@ const serialize = new Serializer()
 // Добавить сериалайзер для User
 serialize.add('user', {
   // Фильтрация полей (включая кастомные поля)
-  attributes: ['name', 'email', 'email1', 'password', 'photo'], 
+  attributes: ['name', 'email', 'email1', 'password', 'photo'],
+  // Строгая проверка на существование полей форматируемого объекта
   strict: true, 
   // Форматтеры полей
   formatters: { 
