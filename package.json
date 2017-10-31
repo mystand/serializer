@@ -1,0 +1,23 @@
+{
+  "name": "serializer",
+  "version": "1.0.0",
+  "description": "Objects serializer for Node.js",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "MyStand <info@mystand.ru>",
+  "license": "MIT",
+  "dependencies": {
+    "lodash": "^4.17.4",
+    "ramda": "^0.25.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/mystand/serializer.git"
+  },
+  "bugs": {
+    "url": "https://github.com/mystand/serializer/issues"
+  },
+  "homepage": "https://github.com/mystand/serializer#readme"
+}
