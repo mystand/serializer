@@ -51,79 +51,83 @@ class Serializer {
     }
 
     const serialize = (data, options = {}) => {
-      if (!_.isObject(data)) {
-        throw new WrongTypeError('data', 'object', data)
+      if (!_.isObject(data) && !Array.isArray(data)) {
+        throw new WrongTypeError('data', 'object or array', data)
       }
 
-      let serialized = {}
-      let attributes = (schema.attributes) ? schema.attributes : Object.keys(data)
+      const serializeData = (data) => {
+        let serialized = {}
+        let attributes = (schema.attributes) ? schema.attributes : Object.keys(data)
 
-      if (!_.isObject(options)) {
-        throw new WrongTypeError('options', 'object', options)
-      }
-
-      if (options.omit) {
-        if (!Array.isArray(options.omit)) {
-          throw new WrongTypeError('options.omit', 'array', options.omit)
+        if (!_.isObject(options)) {
+          throw new WrongTypeError('options', 'object', options)
         }
 
-        attributes = attributes.filter(attribute => !options.omit.includes(attribute))
-      }
+        if (options.omit) {
+          if (!Array.isArray(options.omit)) {
+            throw new WrongTypeError('options.omit', 'array', options.omit)
+          }
 
-      if (options.only) {
-        if (!Array.isArray(options.only)) {
-          throw new WrongTypeError('options.only', 'array', options.only)
+          attributes = attributes.filter(attribute => !options.omit.includes(attribute))
         }
 
-        attributes = options.only
-      }
+        if (options.only) {
+          if (!Array.isArray(options.only)) {
+            throw new WrongTypeError('options.only', 'array', options.only)
+          }
 
-      if (schema.formatters) {
-        for (let key of Object.keys(schema.formatters)) {
-          if (attributes.includes(key)) {
-            const formatter = schema.formatters[key]
+          attributes = options.only
+        }
 
-            if (_.isFunction(formatter)) {
-              serialized[key] = formatter(data, options)
-            } else if (_.isObject(formatter)) {
-              if (!_.isString(formatter['$ref'])) {
-                throw new WrongRefTypeError(schema[key]['$ref'])
-              }
+        if (schema.formatters) {
+          for (let key of Object.keys(schema.formatters)) {
+            if (attributes.includes(key)) {
+              const formatter = schema.formatters[key]
 
-              const fieldSerializer = this.get(formatter['$ref'])
+              if (_.isFunction(formatter)) {
+                serialized[key] = formatter(data, options)
+              } else if (_.isObject(formatter)) {
+                if (!_.isString(formatter['$ref'])) {
+                  throw new WrongRefTypeError(schema[key]['$ref'])
+                }
 
-              if (!fieldSerializer.serialize) {
-                continue
-              }
+                const fieldSerializer = this.get(formatter['$ref'])
 
-              if (Array.isArray(data[key])) {
-                serialized[key] = data[key].map(el => fieldSerializer.serialize(el, formatter.options))
-              } else {
+                if (!fieldSerializer.serialize) {
+                  continue
+                }
+
                 serialized[key] = fieldSerializer.serialize(data[key], formatter.options)
+              } else {
+                throw new WrongFormatterError(schema[key])
               }
+            }
+          }
+        }
+
+        for (let key of attributes) {
+          if (serialized[key] === undefined) {
+            if (data[key]) {
+              serialized[key] = data[key]
             } else {
-              throw new WrongFormatterError(schema[key])
+              let strict = _.isBoolean(options.strict) ? options.strict : schema.strict
+
+              if (strict) {
+                throw new AttributeNotFoundError(key)
+              }
             }
           }
         }
+
+        this.stack.pop()
+        return serialized
       }
 
-      for (let key of attributes) {
-        if (serialized[key] === undefined) {
-          if (data[key]) {
-            serialized[key] = data[key]
-          } else {
-            let strict = _.isBoolean(options.strict) ? options.strict : schema.strict
-
-            if (strict) {
-              throw new AttributeNotFoundError(key)
-            }
-          }
-        }
+      if (Array.isArray(data)) {
+        return data.map(el => serializeData(el))
+      } else {
+        return serializeData(data)
       }
-
-      this.stack.pop()
-      return serialized
     }
 
     return {
