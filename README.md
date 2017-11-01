@@ -50,7 +50,43 @@ serialize.user(test_user)
 //      { url: '/test/path/img2.png' } ],
 //   name: 'Tester',
 //   password: '12345' }
-//
+
+// Для массива работает идентично
+let test_users = [{ 
+  name: 'Tester1', 
+  email: 'TEST@email.com', 
+  password: '12345', 
+  photo: [{ 
+    path: '/test/path/img1', 
+    type: 'jpeg' 
+  }, { 
+    path: '/test/path/img2', 
+    type: 'png' 
+  }] 
+}, { 
+  name: 'Tester2', 
+  email: 'test2@gmail.com', 
+  password: '12345678', 
+  photo: [{ 
+    path: '/test/path/img3', 
+    type: 'gif' 
+  }, { 
+    path: '/test/path/img4', 
+    type: 'png' 
+  }] 
+}]
+serialize.user(test_users)
+// ==>
+// [ { email: 'test@email.com',
+//     email1: 'TEST@EMAIL.COM',
+//     photo: [ [Object], [Object] ],
+//     name: 'Tester1',
+//     password: '12345' },
+//   { email: 'test2@gmail.com',
+//     email1: 'TEST2@GMAIL.COM',
+//     photo: [ [Object], [Object] ],
+//     name: 'Tester2',
+//     password: '12345678' } ]
 ```
 
 ### Опции
