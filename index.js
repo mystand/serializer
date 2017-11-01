@@ -8,17 +8,7 @@ const {
   AttributeNotFoundError,
   WrongDataTypeError
 } = require('./errors')
-
-const arrayCount = (array, elem) => {
-  let count = 0
-  for (let el of array) {
-    if (el === elem) {
-      count++
-    }
-  }
-
-  return count
-}
+const { arrayElementCount } = require('./utils')
 
 class Serializer {
   constructor () {
@@ -40,7 +30,7 @@ class Serializer {
   }
 
   checkRecursion (name) {
-    if (arrayCount(this.stack, name) > 1) {
+    if (arrayElementCount(this.stack, name) > 1) {
       return false
     }
     return true
