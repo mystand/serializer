@@ -82,6 +82,14 @@ serialize.user(test_user, {
 })
 // ==>
 // { email: 'test@email.com' }
+
+// В ссылку на сериалайзер также можно передать опции
+{
+// ...
+  photo: { $ref: 'photo', options: { only: ['url'] } }
+// ...
+}
+
 ```
 
 ### Циклические зависимости
