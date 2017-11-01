@@ -84,7 +84,7 @@ class Serializer {
             const formatter = schema.formatters[key]
 
             if (_.isFunction(formatter)) {
-              serialized[key] = formatter(data)
+              serialized[key] = formatter(data, options)
             } else if (_.isObject(formatter)) {
               if (!_.isString(formatter['$ref'])) {
                 throw new WrongRefTypeError(schema[key]['$ref'])
