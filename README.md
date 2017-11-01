@@ -51,8 +51,42 @@ serialize.user(test_user)
 //   name: 'Tester',
 //   password: '12345' }
 //
+```
 
-// Циклические зависимости
+### Опции
+
+```js
+// Опция only замещает attributes в схеме
+serialize.user(test_user, {
+  only: ['email']
+})
+// ==>
+// { email: 'test@email.com' }
+
+// Опция omit удаляет поля из attributes
+serialize.user(test_user, {
+  omit: ['email']
+})
+// ==>
+// { email1: 'TEST@EMAIL.COM',
+//   photo: 
+//    [ { url: '/test/path/img1.jpeg' },
+//      { url: '/test/path/img2.png' } ],
+//   name: 'Tester',
+//   password: '12345' }
+
+// Опция strict замещает strict в сериалайзере
+serialize.user(test_user, {
+  only: ['email', 'undefined_attribute'],
+  strict: false
+})
+// ==>
+// { email: 'test@email.com' }
+```
+
+### Циклические зависимости
+
+```js
 serialize.add('a', {
   attributes: ['b'],
   formatters: {
