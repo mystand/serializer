@@ -97,9 +97,9 @@ class Serializer {
               }
 
               if (Array.isArray(data[key])) {
-                serialized[key] = data[key].map(el => fieldSerializer.serialize(el))
+                serialized[key] = data[key].map(el => fieldSerializer.serialize(el, formatter.options))
               } else {
-                serialized[key] = fieldSerializer.serialize(data[key])
+                serialized[key] = fieldSerializer.serialize(data[key], formatter.options)
               }
             } else {
               throw new WrongFormatterError(schema[key])
