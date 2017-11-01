@@ -56,6 +56,10 @@ class Serializer {
       }
 
       const serializeData = (data) => {
+        if (_.isFunction(data.toJSON)) {
+          data = data.toJSON()
+        }
+
         let serialized = {}
         let attributes = (schema.attributes) ? schema.attributes : Object.keys(data)
 
@@ -95,6 +99,10 @@ class Serializer {
 
                 if (!fieldSerializer.serialize) {
                   continue
+                }
+
+                if (_.isObject(formatter.options) && formatter.options.passParent) {
+                  formatter.options.parent = data
                 }
 
                 serialized[key] = fieldSerializer.serialize(data[key], formatter.options)
