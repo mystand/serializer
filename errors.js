@@ -35,9 +35,9 @@ class AttributeNotFoundError extends ExtendableError {
   }
 }
 
-class WrongDataTypeError extends ExtendableError {
-  constructor (data) {
-    super(`Expected "data" to be object, get ${typeof data} type`)
+class WrongTypeError extends ExtendableError {
+  constructor (name, type, data) {
+    super(`Expected "${name}" to be ${type}, get ${typeof data} type`)
   }
 }
 
@@ -45,4 +45,4 @@ exports.SchemaIsNotDefinedError = SchemaIsNotDefinedError
 exports.WrongRefTypeError = WrongRefTypeError
 exports.WrongFormatterError = WrongFormatterError
 exports.AttributeNotFoundError = AttributeNotFoundError
-exports.WrongDataTypeError = WrongDataTypeError
+exports.WrongTypeError = WrongTypeError

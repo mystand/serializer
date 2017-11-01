@@ -6,7 +6,7 @@ const {
   WrongRefTypeError,
   WrongFormatterError,
   AttributeNotFoundError,
-  WrongDataTypeError
+  WrongTypeError
 } = require('./errors')
 const { arrayElementCount } = require('./utils')
 
@@ -19,9 +19,9 @@ class Serializer {
   add (name, schema) {
     this.schemas.set(name, schema)
 
-    this[name] = (data) => {
+    this[name] = (data, options) => {
       const serializer = this.get(name)
-      return serializer.serialize(data)
+      return serializer.serialize(data, options)
     }
   }
 
@@ -50,13 +50,33 @@ class Serializer {
       throw new SchemaIsNotDefinedError(name)
     }
 
-    const serialize = (data) => {
+    const serialize = (data, options = {}) => {
       if (!_.isObject(data)) {
-        throw new WrongDataTypeError(data)
+        throw new WrongTypeError('data', 'object', data)
       }
 
       let serialized = {}
       let attributes = (schema.attributes) ? schema.attributes : Object.keys(data)
+
+      if (!_.isObject(options)) {
+        throw new WrongTypeError('options', 'object', options)
+      }
+
+      if (options.omit) {
+        if (!Array.isArray(options.omit)) {
+          throw new WrongTypeError('options.omit', 'array', options.omit)
+        }
+
+        attributes = attributes.filter(attribute => !options.omit.includes(attribute))
+      }
+
+      if (options.only) {
+        if (!Array.isArray(options.only)) {
+          throw new WrongTypeError('options.only', 'array', options.only)
+        }
+
+        attributes = options.only
+      }
 
       if (schema.formatters) {
         for (let key of Object.keys(schema.formatters)) {
@@ -93,7 +113,9 @@ class Serializer {
           if (data[key]) {
             serialized[key] = data[key]
           } else {
-            if (schema.strict) {
+            let strict = _.isBoolean(options.strict) ? options.strict : schema.strict
+
+            if (strict) {
               throw new AttributeNotFoundError(key)
             }
           }
