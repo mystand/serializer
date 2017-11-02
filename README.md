@@ -15,7 +15,8 @@ serialize.add('user', {
   formatters: { 
     email: (data) => data.email.toLowerCase(),
     // Форматтер, создающий кастомное поле
-    email1: (data) => data.email.toUpperCase(),
+    // Вторым аргументом передаются опции
+    email1: (data, options) => data.email.toUpperCase(),
     // Ссылка на сериалайзер photo
     photo: { $ref: 'photo' } 
   } 
