@@ -20,6 +20,7 @@ class Serializer {
     this.schemas.set(name, schema)
 
     this[name] = (data, options) => {
+      this.stack = []
       const serializer = this.get(name)
       return serializer.serialize(data, options)
     }
@@ -115,7 +116,7 @@ class Serializer {
 
         for (let key of attributes) {
           if (serialized[key] === undefined) {
-            if (data[key]) {
+            if (data[key] !== undefined) {
               serialized[key] = data[key]
             } else {
               let strict = _.isBoolean(options.strict) ? options.strict : schema.strict
@@ -131,6 +132,7 @@ class Serializer {
         return serialized
       }
 
+      this.stack.pop()
       if (Array.isArray(data)) {
         return data.map(el => serializeData(el))
       } else {
