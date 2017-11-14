@@ -62,7 +62,15 @@ class Serializer {
         }
 
         let serialized = {}
-        let attributes = (schema.attributes) ? schema.attributes : Object.keys(data)
+        let attributes = (Array.isArray(schema.attributes)) ? schema.attributes : Object.keys(data)
+
+        if (Array.isArray(schema.extraAttributes)) {
+          for (let field of schema.extraAttributes) {
+            if (!attributes.includes(field)) {
+              attributes.push(field)
+            }
+          }
+        }
 
         if (!_.isObject(options)) {
           throw new WrongTypeError('options', 'object', options)
