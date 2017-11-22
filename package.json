@@ -1,6 +1,6 @@
 {
   "name": "serializer",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "description": "Objects serializer for Node.js",
   "main": "index.js",
   "scripts": {
