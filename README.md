@@ -1,4 +1,4 @@
-#serializer
+# serializer
 Serializer for Node.js
 ```js
 import Serializer from 'serializer'
