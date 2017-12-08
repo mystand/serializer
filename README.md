@@ -1,167 +1,167 @@
-# serializer
+#serializer
 Serializer for Node.js
 ```js
 import Serializer from 'serializer'
 
 const serialize = new Serializer()
 
-// Добавить сериалайзер для User
+// Add a serializer for User
 serialize.add('user', {
-  // Фильтрация полей (включая кастомные поля)
-  attributes: ['name', 'email', 'email1', 'password', 'photo'],
-  // Строгая проверка на существование полей форматируемого объекта
-  strict: true, 
-  // Форматтеры полей
-  formatters: { 
-    email: (data) => data.email.toLowerCase(),
-    // Форматтер, создающий кастомное поле
-    // Вторым аргументом передаются опции
-    email1: (data, options) => data.email.toUpperCase(),
-    // Третьим аргументом передается сериализованные данные
-    email2: (data, options, serialized) => serialized.email1,
-    // Ссылка на сериалайзер photo
-    photo: { $ref: 'photo' } 
-  } 
-}) 
+  // Field filtering (including custom fields)
+  attributes: ['name', 'email', 'email1', 'password', 'photo'],
+  // Strictly check the existence of the fields of the formatted object
+  strict: true,
+  // Field Formatters
+  formatters: {
+    email: (data) => data.email.toLowerCase (),
+    // The formatter that creates a custom field
+    // The second argument is passed options
+    email1: (data, options) => data.email.toUpperCase(),
+    // The third argument is serialized data
+    email2: (data, options, serialized) => serialized.email1,
+    // Link to the serializer photo
+    photo: { $ref: 'photo' }
+  }
+})
 
-serialize.add('photo', { 
-  attributes: ['url'], 
-  formatters: { 
-    url: (data) => `${data.path}.${data.type}` 
-  } 
-}) 
- 
-let test_user = { 
-  name: 'Tester', 
-  email: 'TEST@email.com', 
-  password: '12345', 
-  photo: [{ 
-    path: '/test/path/img1', 
-    type: 'jpeg' 
-  }, { 
-    path: '/test/path/img2', 
-    type: 'png' 
-  }] 
+serialize.add('photo', {
+  attributes: ['url'],
+  formatters: {
+    url: (data) => `${data.path}.${data.type}`
+  }
+})
+ 
+let test_user = {
+  name: 'Tester',
+  email: 'TEST@email.com',
+  password: '12345',
+  photo: [{
+    path: '/test/path/img1',
+    type: 'jpeg'
+  }, {
+    path: '/test/path/img2',
+    type: 'png'
+  }]
 }
 
 serialize.user(test_user)
 // ==>
 // { email: 'test@email.com',
 //   email1: 'TEST@EMAIL.COM',
-//   photo: 
-//    [ { url: '/test/path/img1.jpeg' },
-//      { url: '/test/path/img2.png' } ],
-//   name: 'Tester',
-//   password: '12345' }
+//   photo:
+//   [{ url: '/test/path/img1.jpeg' },
+//    { url: '/test/path/img2.png' }],
+// name: 'Tester',
+// password: '12345' }
 
-// Для массива работает идентично
-let test_users = [{ 
-  name: 'Tester1', 
-  email: 'TEST@email.com', 
-  password: '12345', 
-  photo: [{ 
-    path: '/test/path/img1', 
-    type: 'jpeg' 
-  }, { 
-    path: '/test/path/img2', 
-    type: 'png' 
-  }] 
-}, { 
-  name: 'Tester2', 
-  email: 'test2@gmail.com', 
-  password: '12345678', 
-  photo: [{ 
-    path: '/test/path/img3', 
-    type: 'gif' 
-  }, { 
-    path: '/test/path/img4', 
-    type: 'png' 
-  }] 
+// For the array it works identically
+let test_users = [{
+  name: 'Tester1',
+  email: 'TEST@email.com',
+  password: '12345',
+  photo: [{
+    path: '/test/path/img1',
+    type: 'jpeg'
+  }, {
+    path: '/test/path/img2',
+    type: 'png'
+  }]
+}, {
+  name: 'Tester2',
+  email: 'test2@gmail.com',
+  password: '12345678',
+  photo: [{
+    path: '/test/path/img3',
+    type: 'gif'
+  }, {
+    path: '/test/path/img4',
+    type: 'png'
+  }]
 }]
 serialize.user(test_users)
 // ==>
-// [ { email: 'test@email.com',
-//     email1: 'TEST@EMAIL.COM',
-//     photo: [ [Object], [Object] ],
-//     name: 'Tester1',
-//     password: '12345' },
-//   { email: 'test2@gmail.com',
-//     email1: 'TEST2@GMAIL.COM',
-//     photo: [ [Object], [Object] ],
-//     name: 'Tester2',
-//     password: '12345678' } ]
+// [{ email: 'test@email.com',
+//    email1: 'TEST@EMAIL.COM',
+//    photo: [[Object], [Object]],
+//    name: 'Tester1',
+//    password: '12345'},
+//  { email: 'test2@gmail.com',
+//    email1: 'TEST2@GMAIL.COM',
+//    photo: [[Object], [Object]],
+//    name: 'Tester2',
+//    password: '12345678' }]
 ```
 
-### Опции
+### Options
 
 ```js
-// Опция only замещает attributes в схеме
+// The only option replaces the attributes in the schema
 serialize.user(test_user, {
-  only: ['email']
+  only: ['email']
 })
 // ==>
 // { email: 'test@email.com' }
 
-// Опция omit удаляет поля из attributes
+// omit option removes fields from attributes
 serialize.user(test_user, {
-  omit: ['email']
+  omit: ['email']
 })
 // ==>
 // { email1: 'TEST@EMAIL.COM',
-//   photo: 
-//    [ { url: '/test/path/img1.jpeg' },
-//      { url: '/test/path/img2.png' } ],
+//   photo:
+//   [{ url: '/test/path/img1.jpeg' },
+//    { url: '/test/path/img2.png' }],
 //   name: 'Tester',
 //   password: '12345' }
 
-// Опция strict замещает strict в сериалайзере
+// The strict option replaces strict in the serializer
 serialize.user(test_user, {
-  only: ['email', 'undefined_attribute'],
-  strict: false
+  only: ['email', 'undefined_attribute'],
+  strict: false
 })
 // ==>
 // { email: 'test@email.com' }
 
-// В ссылку на сериалайзер также можно передать опции
-// Опция passParent позволяет передать родителя в дочерний сериалайзер в поле options.parent
+// You can also pass options to the link to the serializer
+// The passParent option allows you to pass the parent to the child serializer in the options.parent field.
 {
 // ...
-  photo: { $ref: 'photo', options: { only: ['url'], passParent: true } }
+  photo: { $ref: 'photo', options: { only: ['url'], passParent: true } }
 // ...
 }
 
 ```
 
-### Циклические зависимости
+### Cyclic dependencies
 
 ```js
 serialize.add('a', {
-  attributes: ['b'],
-  formatters: {
-    b: { $ref: 'b' }
-  }
+  attributes: ['b'],
+  formatters: {
+    b: { $ref: 'b' }
+  }
 })
 
 serialize.add('b', {
-  attributes: ['a', 'c'],
-  formatters: {
-    a: { $ref: 'a' },
-    c: (data) => data.c + 1
-  }
+  attributes: ['a', 'c'],
+  formatters: {
+    a: { $ref: 'a' },
+    c: (data) => data.c + 1
+  }
 })
 
 let test_a = {
-  b: {
-    a: 123,
-    c: 1337
-  }
+  b: {
+    a: 123,
+    c: 1337
+  }
 }
 
 let test_b = {
-  a: {
-    b: 234
-  },
-  c: 1339
+  a: {
+    b: 234
+  },
+  c: 1339
 }
 
 serialize.a(test_a)
