@@ -30,6 +30,16 @@ serialize.add('photo', {
     url: (data) => `${data.path}.${data.type}`
   }
 })
+
+// If you want to add all fields of object with some formatters and don't want to 
+// write all fields in attributes option, you can use extraAttributes option.
+serialize.add('userThroughExtraAttributes', {
+  extraAttributes: ['email1', 'email2'],
+  formatters: {
+    email1: (data, options) => data.email.toUpperCase(),
+    email2: (data, options, serialized) => serialized.email1
+  }
+})
  
 let test_user = {
   name: 'Tester',
