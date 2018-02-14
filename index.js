@@ -52,11 +52,15 @@ class Serializer {
     }
 
     const serialize = (data, options = {}) => {
-      if (!_.isObject(data) && !Array.isArray(data)) {
+      if (!_.isObject(data) && !Array.isArray(data) && !_.isNull(data)) {
         throw new WrongTypeError('data', 'object or array', data)
       }
 
       const serializeData = (data) => {
+        if (_.isNull(data)) {
+          return null
+        }
+
         if (_.isFunction(data.toJSON)) {
           data = data.toJSON()
         }
