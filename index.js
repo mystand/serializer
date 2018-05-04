@@ -118,7 +118,9 @@ class Serializer {
                   formatter.options.parent = data
                 }
 
-                serialized[key] = fieldSerializer.serialize(data[key], formatter.options)
+                const valueToSerialize = _.isFunction(formatter.getter) ? formatter.getter(data) : data[key]
+
+                serialized[key] = fieldSerializer.serialize(valueToSerialize, formatter.options)
               } else {
                 throw new WrongFormatterError(schema[key])
               }
