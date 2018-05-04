@@ -24,6 +24,14 @@ serialize.add('user', {
   }
 })
 
+serialize.add('testGetters', {
+  attributes: ['gallery'],
+  formatters: {
+    // Formatter can have getter function for data extraction
+    gallery: { $ref: 'photo', getter: (data) => data.testPhotos.map(el => el.photo) }
+  }
+})
+
 serialize.add('photo', {
   attributes: ['url'],
   formatters: {
