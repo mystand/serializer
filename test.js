@@ -44,7 +44,7 @@ serialize.add('photo', {
   }
 })
 
-// If you want to add all fields of object with some formatters and don't want to 
+// If you want to add all fields of object with some formatters and don't want to
 // write all fields in attributes option, you can use extraAttributes option.
 serialize.add('userThroughExtraAttributes', {
   extraAttributes: ['email1', 'email2'],
@@ -198,3 +198,18 @@ console.log(serialize.testGetters(galleryWithGettersValues).map(el => el.gallery
 //     { url: '/test/path/img41337.png1337', test: [Object] }
 //   ]
 // ]
+
+// If you always want to get all fields of object excluding some of them, use omit in schema
+serialize.add('omitUserPassword', {
+  omit: ['password']
+})
+
+const plainUser = {
+  name: 'Tester',
+  email: 'TEST@email.com',
+  password: '12345'
+}
+
+console.log(serialize.omitUserPassword(plainUser))
+// ==>
+// { name: 'Tester', email: 'TEST@email.com' }
