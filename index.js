@@ -76,6 +76,10 @@ class Serializer {
           }
         }
 
+        if (Array.isArray(schema.omit)) {
+          attributes = attributes.filter(attribute => !schema.omit.includes(attribute))
+        }
+
         if (!_.isObject(options)) {
           throw new WrongTypeError('options', 'object', options)
         }

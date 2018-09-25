@@ -108,6 +108,21 @@ serialize.user(test_users)
 //    photo: [[Object], [Object]],
 //    name: 'Tester2',
 //    password: '12345678' }]
+
+// If you always want to get all fields of object excluding some of them, use omit in schema
+serialize.add('omitUserPassword', {
+  omit: ['password']
+})
+
+const plainUser = {
+  name: 'Tester',
+  email: 'TEST@email.com',
+  password: '12345'
+}
+
+console.log(serialize.omitUserPassword(plainUser))
+// ==>
+// { name: 'Tester', email: 'TEST@email.com' }
 ```
 
 ### Options
